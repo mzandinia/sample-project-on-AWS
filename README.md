@@ -9,7 +9,7 @@ This repository contains all the necessary code and documentation for setting up
 ### Week 1: Deploy Nexus Repository OSS on EC2
 
 - Deploy Nexus Repository OSS on an EC2 instance.
-- [Instructions and details](week1/README.md)
+- [Instructions and details](week1)
 
 ### Week 2: Deploy Ansible and use it to Configure Nexus
 
