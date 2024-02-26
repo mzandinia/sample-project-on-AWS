@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains all the necessary code and documentation for setting up a sample project on AWS. Each week, new components are added and configured to create a comprehensive cloud-based environment.
+This repository contains all the necessary code and documentation for setting up a sample project on AWS. Each week, new components will be added.
 
 ## Weekly Plan
 
@@ -15,7 +15,6 @@ This repository contains all the necessary code and documentation for setting up
 
 - Deploy Ansible on a new EC2 instance.
 - Configure Nexus Repository using an Ansible playbook.
-- [Instructions and details](week2/README.md)
 
 ### Week 3: Auto Update Linux OS with Ansible and Splunk
 
@@ -23,19 +22,17 @@ This repository contains all the necessary code and documentation for setting up
 - Use Ansible playbook to update all Linux flavors.
 - Deploy Splunk on another EC2 instance.
 - Use Splunk to monitor the results of the update process.
-- [Instructions and details](week3/README.md)
 
 ### Week 4: Deploy Highly Available Splunk
 
 - Deploy a highly available Splunk setup on EC2 instances using Terraform.
-- [Instructions and details](week4/README.md)
 
 ## Repository Structure
 
-- `/week1`: Nexus Repository deployment files.
-- `/week2`: Ansible playbooks and configuration files.
-- `/week3`: Update scripts, Linux OS configurations, and Splunk deployment files.
-- `/week4`: Terraform files for the Splunk setup.
+- `week1`: Nexus Repository deployment files.
+- `week2`: Ansible playbooks and configuration files.
+- `week3`: Update scripts, Linux OS configurations, and Splunk deployment files.
+- `week4`: Terraform files for the Splunk setup.
 
 ## Prerequisites
 
@@ -44,7 +41,7 @@ Before you can use these configurations, you need to have the following:
 - An AWS account with appropriate permissions to create resources such as VPC, EC2 instances, and security groups.
 - Terraform installed on your local machine. [Install Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli).
 - AWS CLI installed and configured on your local machine. [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
-- Your AWS credentials, including your Access Key and Secret Access Key, configured for use with the AWS CLI or Terraform. These credentials should be associated with a user that has the necessary permissions to deploy and manage the AWS resources.
+- Your AWS credentials, including your Access Key and Secret Access Key, are configured for use with the AWS CLI or Terraform. These credentials should be associated with a user who has the necessary permissions to deploy and manage the AWS resources.
 To set up your AWS credentials:
 
     1. Log in to the AWS Management Console.
