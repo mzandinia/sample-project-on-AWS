@@ -47,6 +47,8 @@ To deploy Nexus on an EC2 instance using this project, follow these steps:
 3. Run `terraform plan` to preview the changes that Terraform will make to your AWS infrastructure.
 4. If the plan looks good, run `terraform apply` to apply the changes and deploy Nexus on EC2.
 
+**Note: You can see the initial password of Nexus Repository at the end. Also you can find the URL that you can use to login into Nexus Repository.**
+
 ## Customization
 
 You can customize your deployment by modifying the `.tf` files with your desired configurations. Ensure you review and update the variables to match your requirements.
