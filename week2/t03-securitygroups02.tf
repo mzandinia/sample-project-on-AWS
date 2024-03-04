@@ -28,3 +28,23 @@ module "nexus_sg" {
   tags = local.common_tags
 }
 
+module "ansible_sg" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "5.1.0"
+
+  name        = "ansible-sg"
+  description = "Allow SSH from whole VPC"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress_with_cidr_blocks = [
+    {
+      rule        = "ssh-tcp"
+      cidr_blocks = "${module.vpc.vpc_cidr_block}"
+    },
+  ]
+
+  # Egress Rule - all-all open
+  egress_rules = ["all-all"]
+
+  tags = local.common_tags
+}

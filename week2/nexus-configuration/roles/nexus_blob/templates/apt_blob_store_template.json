@@ -1,0 +1,9 @@
+{
+  "name": "{{ apt_blob_store_name }}",
+  "path": "/nexus-data/blobs/{{ apt_blob_store_name }}",
+  "type": "File",
+  "softQuota": {
+      "type": "spaceRemainingQuota",
+      "limit": 104857600
+  }
+}

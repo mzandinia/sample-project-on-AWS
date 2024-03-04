@@ -1,0 +1,14 @@
+---
+- name: Create Nexus Alma Linux proxy repository
+  uri:
+    url: "{{ nexus_repository_url }}/service/rest/v1/repositories/yum/proxy"
+    method: POST
+    user: "{{ nexus_user }}"
+    password: "{{ nexus_password }}"
+    body: "{{ lookup('template', 'alma_proxy_template.json') }}"
+    force_basic_auth: yes
+    status_code: 201
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+  register: alma_proxy_response
