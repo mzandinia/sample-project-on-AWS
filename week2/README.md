@@ -1,6 +1,6 @@
-# Week 2: Deploy Ansible on EC2 and push the configuration via it to Nexus
+# Week 2: Deploy Ansible on EC2 and Configure Nexus
 
-This repository contains Terraform configurations and scripts to deploy Ansible on an AWS EC2. In the other hand we configure the Nexus repository via Ansible to proxy various Linux distributions.
+This week's project focuses on the deployment of Ansible on an AWS EC2 instance and the subsequent configuration of a Nexus repository using Ansible. This setup is designed to proxy various Linux distributions.
 
 ## Disclaimer
 
@@ -8,19 +8,39 @@ This repository contains Terraform configurations and scripts to deploy Ansible 
 
 ## Overview
 
+In this phase of the project, we focus on deploying Ansible on an AWS EC2 instance and using it to configure a Nexus repository manager. The Nexus repository is set up to function as a proxy for various Linux distributions, facilitating the management of packages and their distribution.
+
 ## Repository Structure
 
+- `nexus-configuration/`: Contains configuration files and scripts for setting up Nexus.
+- `config_ansible.sh`: A shell script to install and configure Ansible on the EC2 instance.
+- `t02-ec2instance05-ansible-host.tf`: Terraform configuration file for creating the EC2 instance that will host Ansible.
+- `t03-securitygroups02.tf`: Terraform configuration file for setting up security groups related to the EC2 instance.
+-
 ## Variables
+
+By default, the EC2 instance type is set to `t3.medium`. However, this can be modified to suit different performance needs or cost considerations. Spot instances are utilized for cost efficiency.
 
 ## Usage
 
-## Customization
+1. **Prepare the Environment**: Ensure that Terraform files are copied to `week1` to use the same VPC configuration.
 
-You can customize your deployment by modifying the `.tf` files with your desired configurations. Ensure you review and update the variables to match your requirements.
+2. **Terraform Deployment**:
+    ```bash
+    terraform apply
+    ```
+   This command deploys Ansible on the EC2 instance.
 
-## Security Notice
+3. **Access Control**: Due to security precautions, the Ansible instance is not accessible from any location. Start by logging into the Nexus repository, and from there, access the Ansible instance via SSH.
 
-Ensure that your AWS credentials are securely stored and that you follow the principle of least privilege when setting up your Terraform AWS provider.
+4. **Ansible Configuration**:
+    Navigate to the `nexus-configuration` directory and execute:
+    ```bash
+    ansible-playbook playbook.yml
+    ```
+   You will be prompted to enter the Nexus Repository password.
+
+The configuration establishes blob stores for 'apt', 'yum', and 'raw' repositories and sets up proxy repositories for Ubuntu, Debian, AlmaLinux, RockyLinux, and Splunk. This approach ensures that we can install Splunk from its repository instead of using a prepared AMI, thereby demonstrating how to perform automatic updates for different Linux distributions.
 
 ## Contributions
 
