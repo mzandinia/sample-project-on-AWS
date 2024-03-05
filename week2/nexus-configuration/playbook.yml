@@ -24,9 +24,9 @@
     - splunk_remoteUrl: "https://download.splunk.com/products/splunk/releases/"
 
   roles:
-    # - role: nexus_blob
-    # - role: nexus_ubuntu
-    # - role: nexus_debian
-    # - role: nexus_alma
-    # - role: nexus_rocky
+    - role: nexus_blob
+    - role: nexus_ubuntu
+    - role: nexus_debian
+    - role: nexus_alma
+    - role: nexus_rocky
     - role: nexus_splunk
