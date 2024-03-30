@@ -13,7 +13,7 @@ In this phase of the project, we focus on configuring Linux instances to use Nex
 ## Repository Structure
 
 - `ansible-project/`: Contains 3 different playbooks and roles to configure the Nexus repository, Linux instances, and install Splunk.
-- `Terrafom files`: contains necessary files for creating resources on AWS
+- `Terraform files`: contains necessary files for creating resources on AWS
   - `t00`: Basic variables and configurations of Terraform
   - `t01`: VPC configuration and variables
   - `t02`: all different instances, as well as variables, locals, and data sources
