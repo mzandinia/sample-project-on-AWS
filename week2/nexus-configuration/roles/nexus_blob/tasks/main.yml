@@ -1,0 +1,42 @@
+---
+- name: Create blob store for APT
+  uri:
+    url: "{{ nexus_repository_url }}/service/rest/v1/blobstores/file"
+    method: POST
+    user: "{{ nexus_user }}"
+    password: "{{ nexus_password }}"
+    body: "{{ lookup('template', 'apt_blob_store_template.json') }}"
+    force_basic_auth: yes
+    status_code: 204
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+  register: apt_blob_response
+
+- name: Create blob store for YUM
+  uri:
+    url: "{{ nexus_repository_url }}/service/rest/v1/blobstores/file"
+    method: POST
+    user: "{{ nexus_user }}"
+    password: "{{ nexus_password }}"
+    body: "{{ lookup('template', 'yum_blob_store_template.json') }}"
+    force_basic_auth: yes
+    status_code: 204
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+  register: yum_blob_response
+
+- name: Create blob store for RAW Files
+  uri:
+    url: "{{ nexus_repository_url }}/service/rest/v1/blobstores/file"
+    method: POST
+    user: "{{ nexus_user }}"
+    password: "{{ nexus_password }}"
+    body: "{{ lookup('template', 'raw_blob_store_template.json') }}"
+    force_basic_auth: yes
+    status_code: 204
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+  register: yum_blob_response

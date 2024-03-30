@@ -1,0 +1,32 @@
+---
+- hosts: nexus
+  become: yes
+  vars_prompt:
+    - name: "nexus_password"
+      prompt: "Enter Nexus password: "
+      private: yes
+
+  vars:
+    - nexus_repository_url: http://10.10.10.10:8081
+    - nexus_user: "admin"
+    - apt_blob_store_name: "apt-blob-store"
+    - yum_blob_store_name: "yum-blob-store"
+    - raw_blob_store_name: "raw-blob-store"
+    - almalinux_repo_name: "almalinux-proxy"
+    - almalinux_remoteUrl: "http://ftp.gwdg.de/pub/linux/almalinux/"
+    - debian_repo_name: "debian-proxy"
+    - debian_remoteUrl: "http://deb.debian.org"
+    - rockylinux_repo_name: "rockylinux-proxy"
+    - rockylinux_remoteUrl: "http://ftp.gwdg.de/pub/linux/rocky/"
+    - ubuntu_repo_name: "ubuntu-proxy"
+    - ubuntu_remoteUrl: "http://debian.charite.de/ubuntu/"
+    - splunk_repo_name: "splunk-proxy"
+    - splunk_remoteUrl: "https://download.splunk.com/products/splunk/releases/"
+
+  roles:
+    - role: nexus_blob
+    - role: nexus_ubuntu
+    - role: nexus_debian
+    - role: nexus_alma
+    - role: nexus_rocky
+    - role: nexus_splunk

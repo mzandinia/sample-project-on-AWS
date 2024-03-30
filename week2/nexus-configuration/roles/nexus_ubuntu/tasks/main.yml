@@ -1,0 +1,14 @@
+---
+- name: Create Nexus Ubuntu proxy repository
+  uri:
+    url: "{{ nexus_repository_url }}/service/rest/v1/repositories/apt/proxy"
+    method: POST
+    user: "{{ nexus_user }}"
+    password: "{{ nexus_password }}"
+    body: "{{ lookup('template', 'ubuntu_proxy_template.json') }}"
+    force_basic_auth: yes
+    status_code: 201
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+  register: ubuntu_proxy_response

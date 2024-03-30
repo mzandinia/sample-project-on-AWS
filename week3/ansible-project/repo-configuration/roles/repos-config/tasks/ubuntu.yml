@@ -1,0 +1,12 @@
+---
+- name: Rename original sources.list
+  ansible.builtin.shell: mv /etc/apt/sources.list /etc/apt/sources.list.bak
+
+- name: Set Ubuntu repository URLs
+  ansible.builtin.template:
+    src: ubuntu.sources.list.j2
+    dest: /etc/apt/sources.list
+
+- name: Update repository cache
+  ansible.builtin.apt:
+    update_cache: true

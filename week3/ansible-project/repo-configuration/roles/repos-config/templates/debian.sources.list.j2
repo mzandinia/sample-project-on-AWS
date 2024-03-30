@@ -1,0 +1,4 @@
+deb {{ debian_repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main contrib non-free non-free-firmware
+deb {{ debian_repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }}-updates main contrib non-free non-free-firmware
+deb {{ debian_repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }}-backports main contrib non-free non-free-firmware
+deb {{ debian_repo_url }}/{{ ansible_distribution | lower }}-security {{ ansible_distribution_release }}-security main contrib non-free non-free-firmware

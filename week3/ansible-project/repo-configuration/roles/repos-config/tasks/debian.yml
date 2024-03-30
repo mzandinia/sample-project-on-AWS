@@ -1,0 +1,21 @@
+---
+- name: Rename original sources.list
+  ansible.builtin.shell: mv /etc/apt/sources.list /etc/apt/sources.list.bak
+
+- name: Rename and move debian.sources
+  ansible.builtin.shell: mv /etc/apt/sources.list.d/debian.sources /etc/apt/debian.sources.org
+
+- name: Rename debian-security.list
+  ansible.builtin.shell: mv /etc/apt/mirrors/debian-security.list /etc/apt/mirrors/debian-security.list.org
+
+- name: Rename debian.list
+  ansible.builtin.shell: mv /etc/apt/mirrors/debian.list /etc/apt/mirrors/debian.list.org
+
+- name: Set Debian repository URLs
+  ansible.builtin.template:
+    src: debian.sources.list.j2
+    dest: /etc/apt/sources.list
+
+- name: Update repository cache
+  ansible.builtin.apt:
+    update_cache: true

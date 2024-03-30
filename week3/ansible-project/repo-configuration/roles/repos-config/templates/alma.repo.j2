@@ -1,0 +1,17 @@
+[AppStream]
+name={{ ansible_distribution }} $releasever - AppStream
+baseurl={{ alma_repo_url }}/$releasever/AppStream/$basearch/os/
+enabled=1
+gpgcheck=0
+
+[BaseOS]
+name={{ ansible_distribution }} $releasever - BaseOS
+baseurl={{ alma_repo_url }}/$releasever/BaseOS/$basearch/os/
+enabled=1
+gpgcheck=0
+
+[extras]
+name={{ ansible_distribution }} $releasever - Extras
+baseurl={{ alma_repo_url }}/$releasever/extras/$basearch/os/
+enabled=1
+gpgcheck=0
