@@ -24,33 +24,11 @@ This repository contains all the necessary code and documentation for setting up
 - Install Splunk
 - [Instructions and details](week3)
 
-### Week 4: Deploy Highly Available Splunk
+### Week 4: Automating Linux Distribution Updates with Ansible and Monitoring with Splunk
 
-- Deploy a highly available Splunk setup on EC2 instances using Terraform.
+- Automates the update process the most popular Linux distributions (RedHat and Debian based) and allows monitoring of these updates via a Splunk dashboard
+- - [Instructions and details](week4)
 
-## Repository Structure
-
-- `week1`: Nexus Repository deployment files.
-- `week2`: Ansible playbooks and configuration files.
-- `week3`: Update scripts, Linux OS configurations, and Splunk deployment files.
-- `week4`: Terraform files for the Splunk setup.
-
-## Prerequisites
-
-Before you can use these configurations, you need to have the following:
-
-- An AWS account with appropriate permissions to create resources such as VPC, EC2 instances, and security groups.
-- Terraform installed on your local machine. [Install Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli).
-- AWS CLI installed and configured on your local machine. [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
-- Your AWS credentials, including your Access Key and Secret Access Key, are configured for use with the AWS CLI or Terraform. These credentials should be associated with a user who has the necessary permissions to deploy and manage the AWS resources.
-To set up your AWS credentials:
-
-    1. Log in to the AWS Management Console.
-    2. Navigate to the IAM (Identity and Access Management) service.
-    3. Create a new IAM user or use an existing one, and ensure programmatic access is enabled for the user.
-    4. Attach policies that grant the user sufficient permissions to create, modify, and delete resources as required by the Terraform configurations.
-    5. On the final screen, you will be provided with an Access Key ID and Secret Access Key for the user. Store these credentials securely.
-    6. Configure the AWS CLI with the credentials by running `aws configure` and entering the Access Key ID and Secret Access Key when prompted.
 
 ## Usage
 

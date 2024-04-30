@@ -1,0 +1,47 @@
+---
+- name: Updating "RedHat"s cache
+  when: facts['ansible_facts']['ansible_os_family'] == "RedHat"
+  block:
+    - name: Executing command to makecache changes
+      ansible.builtin.shell: yum clean all && yum makecache
+      ignore_errors: true
+      register: cache_update_result
+      throttle: "{{ throttling }}"
+      retries: 1
+      async: 60
+      poll: 10
+      failed_when: cache_update_result is failed or 'There are no enabled repositories' in cache_update_result.stdout
+      until: cache_update_result is success
+
+    - name: Set fact based on the task result
+      ansible.builtin.set_fact:
+        cache_update: "Success"
+      when: not cache_update_result.failed
+
+    - name: Set fact based on the task result
+      ansible.builtin.set_fact:
+        cache_update: "Failure"
+      when: cache_update_result.failed
+
+- name: Updating "Debian"s cache
+  when: facts['ansible_facts']['ansible_os_family'] == "Debian"
+  block:
+    - name: Updating cache
+      ansible.builtin.apt:
+        update_cache: true
+        clean: true
+      register: cache_update_result
+      retries: 1
+      throttle: "{{ throttling }}"
+      until: cache_update_result is success or ('Failed to lock apt for exclusive operation' not in cache_update_result.msg and '/var/lib/dpkg/lock' not in cache_update_result.msg)
+      ignore_errors: true
+
+    - name: Set fact based on the Updating cache result
+      ansible.builtin.set_fact:
+        cache_update: "Success"
+      when: not cache_update_result.failed
+
+    - name: Set fact based on the Updating cache result
+      ansible.builtin.set_fact:
+        cache_update: "Failure"
+      when: cache_update_result.failed

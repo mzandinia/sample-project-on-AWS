@@ -1,0 +1,14 @@
+---
+- name: Create Nexus Splunk proxy repository
+  ansible.builtin.uri:
+    url: "{{ nexus_repository_url }}/service/rest/v1/repositories/raw/proxy"
+    method: POST
+    user: "{{ nexus_user }}"
+    password: "{{ nexus_password }}"
+    body: "{{ lookup('template', 'splunk_proxy_template.json') }}"
+    force_basic_auth: true
+    status_code: 201
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+  register: splunk_proxy_response

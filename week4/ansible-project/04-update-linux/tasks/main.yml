@@ -1,0 +1,29 @@
+---
+- name: Gathering minimal facts
+  ansible.builtin.include_tasks: gather_minimal_facts.yml
+- name: Writing results if host is unavailable
+  ansible.builtin.include_tasks: write_final_results.yml
+  when:
+    - facts['unreachable'] is defined
+    - facts['unreachable']
+
+- name: Playing main tasks
+  when:
+    - facts['unreachable'] is not defined
+    - facts['ansible_facts'] is defined
+    - not facts['failed']
+  block:
+    - name: Updating cache
+      ansible.builtin.include_tasks: cache_update.yml
+    - name: Updating "RedHat" based OS
+      ansible.builtin.include_tasks: update_radhat_base_os.yml
+      when: facts['ansible_facts']['ansible_os_family'] == "RedHat"
+    - name: Updating "Debian" based OS
+      ansible.builtin.include_tasks: update_debian_base_os.yml
+      when: facts['ansible_facts']['ansible_os_family'] == "Debian"
+    - name: Checking for reboot
+      ansible.builtin.include_tasks: check_if_reboot_requierd.yml
+    - name: Reboot machine if necessary
+      ansible.builtin.include_tasks: reboot_machine_if_requiered.yml
+    - name: Writing updating final results
+      ansible.builtin.include_tasks: write_final_results.yml

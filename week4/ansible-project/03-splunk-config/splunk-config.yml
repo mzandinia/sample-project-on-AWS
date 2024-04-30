@@ -1,0 +1,67 @@
+---
+- name: Installing and configuring splunk
+  hosts: splunk
+  become: true
+  gather_facts: false
+
+  vars:
+    - repo_url: "http://10.10.10.10:8081/repository"
+    - splunk_repo_url: "{{ repo_url }}/splunk-proxy"
+    - owner: root
+    - group: root
+
+  tasks:
+    - name: Get the splunk tgz file for linux
+      ansible.builtin.get_url:
+        url: "{{ splunk_repo_url }}/9.1.4/linux/splunk-9.1.4-a414fc70250e-Linux-x86_64.tgz"
+        dest: /tmp/splunk-9.1.4-a414fc70.tgz
+        mode: "0644"
+        timeout: 1200
+
+    - name: Extract splunk in /opt/splunk
+      ansible.builtin.unarchive:
+        src: /tmp/splunk-9.1.4-a414fc70.tgz
+        remote_src: true
+        dest: /opt
+        owner: "{{ owner }}"
+        group: "{{ group }}"
+
+    - name: Extract Linux update app in /opt/splunk
+      ansible.builtin.unarchive:
+        src: ./linux-update.tgz
+        dest: /opt/splunk/etc/apps
+        owner: "{{ owner }}"
+        group: "{{ group }}"
+
+    - name: Write password in user-seed.conf file
+      ansible.builtin.blockinfile:
+        path: /opt/splunk/etc/system/local/user-seed.conf
+        create: true
+        mode: "0644"
+        block: |
+          [user_info]
+          USERNAME = admin
+          PASSWORD = changeme
+
+    - name: Accept license without starting splunk
+      ansible.builtin.shell: /opt/splunk/bin/splunk status --accept-license --answer-yes
+      register: result
+      changed_when: result.rc in [0, 3]
+      failed_when: result.rc not in [0, 3]
+
+    - name: Enable Splunk boot-start with systemd
+      ansible.builtin.shell: /opt/splunk/bin/splunk enable boot-start -systemd-managed 1 -user {{ owner }} -group {{ group }}
+      register: result
+      changed_when: result.rc == 0
+
+    - name: Start splunk
+      ansible.builtin.systemd_service:
+        name: Splunkd
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    - name: Delete splunk tgz file from /tmp
+      ansible.builtin.file:
+        path: /tmp/splunk-9.1.4-a414fc70.tgz
+        state: absent

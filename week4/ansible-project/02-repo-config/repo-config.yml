@@ -1,0 +1,19 @@
+---
+- hosts:
+    - ubuntu22
+    - debian12
+    - almalinux9
+    - rockylinux9
+    - splunk
+  become: true
+  gather_facts: true
+
+  vars:
+    - repo_url: "http://10.10.10.10:8081/repository"
+    - debian_repo_url: "{{ repo_url }}/debian-proxy"
+    - ubuntu_repo_url: "{{ repo_url }}/ubuntu-proxy"
+    - alma_repo_url: "{{ repo_url }}/almalinux-proxy"
+    - rocky_repo_url: "{{ repo_url }}/rockylinux-proxy"
+
+  roles:
+    - role: repos-config

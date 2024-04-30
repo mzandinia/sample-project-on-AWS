@@ -1,0 +1,17 @@
+---
+- name: Create Backup directory for default repositories
+  ansible.builtin.file:
+    path: /etc/yum.repos.d/repo_bak
+    state: directory
+
+- name: Moving existing repo files to new directory
+  ansible.builtin.shell: mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/repo_bak
+
+- name: Setup nexus repository URLs
+  ansible.builtin.template:
+    src: alma.repo.j2
+    dest: /etc/yum.repos.d/nexus.repo
+
+- name: Update repository cache
+  ansible.builtin.yum:
+    update_cache: true

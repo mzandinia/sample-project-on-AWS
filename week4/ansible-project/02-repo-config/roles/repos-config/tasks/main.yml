@@ -1,0 +1,9 @@
+---
+- include_tasks: almalinux.yml
+  when: ansible_distribution == 'AlmaLinux'
+- include_tasks: debian.yml
+  when: ansible_distribution == 'Debian'
+- include_tasks: rockylinux.yml
+  when: ansible_distribution == 'Rocky'
+- include_tasks: ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'

@@ -1,0 +1,64 @@
+- name: Update "RedHat" based OS
+  when:
+    - cache_update is defined
+    - cache_update == "Success"
+  block:
+    - name: Update all packages on RedHat based OS
+      when: exclude == 0
+      block:
+        - name: Update all packages
+          ansible.builtin.yum:
+            name: "*"
+            state: latest
+          throttle: "{{ throttling }}"
+          register: redhat_update_result
+          ignore_errors: true
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "Success"
+          when: redhat_update_result.changed and not redhat_update_result.failed
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "No need to update"
+          when: not redhat_update_result.changed and not redhat_update_result.failed
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "Failure"
+          when: redhat_update_result.failed
+
+    - name: Update some packages on RedHat based OS, excluding specific packages
+      when: exclude == 1
+      block:
+        - name: Update some packages
+          ansible.builtin.yum:
+            name: "*"
+            state: latest
+            exclude: "{{ redhat_exclude_packages }}"
+          throttle: "{{ throttling }}"
+          register: redhat_update_result
+          ignore_errors: true
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "Success"
+          when: redhat_update_result.changed and not redhat_update_result.failed
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "No need to update"
+          when: not redhat_update_result.changed and not redhat_update_result.failed
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "Failure"
+          when: redhat_update_result.failed
+
+- name: Set facts if cache update is not performed
+  when:
+    - cache_update is defined
+    - cache_update == "Failure"
+  ansible.builtin.set_fact:
+    update_result: "No Change - Cache Update not performed"

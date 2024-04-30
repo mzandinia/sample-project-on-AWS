@@ -1,0 +1,90 @@
+---
+- name: Stat of original sources.list
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list
+  register: sources_list_stat
+
+- name: Copy and delete original sources.list
+  when: sources_list_stat.stat.exists
+  block:
+    - name: Copy and delete original sources.list
+      ansible.builtin.copy:
+        src: /etc/apt/sources.list
+        remote_src: true
+        dest: /etc/apt/sources.list.bak
+        mode: "0644"
+
+    - name: Delete original sources.list
+      ansible.builtin.file:
+        path: /etc/apt/sources.list
+        state: absent
+
+- name: Stat of debian.sources
+  ansible.builtin.stat:
+    path: /etc/apt/sources.list.d/debian.sources
+  register: debian_sources_stat
+
+- name: Copy and delete debian.sources
+  when: debian_sources_stat.stat.exists
+  block:
+    - name: Copy debian.sources
+      ansible.builtin.copy:
+        src: /etc/apt/sources.list.d/debian.sources
+        remote_src: true
+        dest: /etc/apt/debian.sources.org
+        mode: "0644"
+
+    - name: Delete debian.sources
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/debian.sources
+        state: absent
+
+- name: Stat of debian-security.list
+  ansible.builtin.stat:
+    path: /etc/apt/mirrors/debian-security.list
+  register: debian_security_stat
+
+- name: Copy and delete debian-security.list
+  when: debian_security_stat.stat.exists
+  block:
+    - name: Copy debian.sources
+      ansible.builtin.copy:
+        src: /etc/apt/mirrors/debian-security.list
+        remote_src: true
+        dest: /etc/apt/mirrors/debian-security.list.org
+        mode: "0644"
+
+    - name: Delete debian.sources
+      ansible.builtin.file:
+        path: /etc/apt/mirrors/debian-security.list
+        state: absent
+
+- name: Stat of debian.list
+  ansible.builtin.stat:
+    path: /etc/apt/mirrors/debian.list
+  register: debian_list_stat
+
+- name: Copy and delete debian-security.list
+  when: debian_list_stat.stat.exists
+  block:
+    - name: Copy debian.sources
+      ansible.builtin.copy:
+        src: /etc/apt/mirrors/debian.list
+        remote_src: true
+        dest: /etc/apt/mirrors/debian.list.org
+        mode: "0644"
+
+    - name: Delete debian.sources
+      ansible.builtin.file:
+        path: /etc/apt/mirrors/debian.list
+        state: absent
+
+- name: Set Debian repository URLs
+  ansible.builtin.template:
+    src: debian.sources.list.j2
+    dest: /etc/apt/sources.list
+    mode: "0644"
+
+- name: Update repository cache
+  ansible.builtin.apt:
+    update_cache: true

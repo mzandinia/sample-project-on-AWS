@@ -1,0 +1,46 @@
+---
+- name: Writing results if hosts unavailable
+  ansible.builtin.lineinfile:
+    line: "Time={{ timestamp }},
+      server_inventory_name={{ inventory_hostname }},
+      server_hostname=-,
+      OS=-,
+      status=unreachable,
+      cache_update_result=-,
+      update_result=-,
+      reboot_required=-,
+      reboot_result=-,
+      elapsed_reboot_time=-"
+    path: "{{ path_log }}"
+    create: yes
+    mode: "774"
+  delegate_to: ansible-controller
+  throttle: 1
+  ignore_errors: true
+  register: host_unreachable
+  when:
+    - facts['unreachable'] is defined
+    - facts['unreachable']
+
+- name: Writing results if hosts available
+  ansible.builtin.lineinfile:
+    line: "Time={{ timestamp }},
+      server_inventory_name={{ inventory_hostname }},
+      server_hostname={{ facts.ansible_facts.ansible_hostname }},
+      OS={{ facts['ansible_facts']['ansible_distribution'] }} {{ facts['ansible_facts']['ansible_distribution_major_version'] }},
+      status=reachable,
+      cache_update_result={{ cache_update }},
+      update_result={{ update_result }},
+      reboot_required={{ reboot_required }},
+      reboot_result={{ reboot_result }},
+      elapsed_reboot_time={{ elapsed_reboot_time }}"
+    path: "{{ path_log }}"
+    create: yes
+    mode: "774"
+  delegate_to: ansible-controller
+  throttle: 1
+  ignore_errors: true
+  register: final_results
+  when:
+    - facts['unreachable'] is not defined
+    - facts['ansible_facts'] is defined

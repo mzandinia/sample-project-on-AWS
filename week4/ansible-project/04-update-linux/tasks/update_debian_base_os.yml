@@ -1,0 +1,89 @@
+---
+- name: Update "Debian" based OS
+  when:
+    - cache_update is defined
+    - cache_update == "Success"
+  block:
+    - name: Update all packages on Debian based OS
+      when: exclude == 0
+      block:
+        - name: Update all packages
+          ansible.builtin.apt:
+            name: "*"
+            state: latest
+          throttle: "{{ throttling }}"
+          register: debian_update_result
+          retries: "{{ to_retry }}"
+          until: debian_update_result is success
+          failed_when: "debian_update_result is failed and 'Failed to lock apt for exclusive operation' not in debian_update_result.msg and '/var/lib/dpkg/lock' not in debian_update_result.msg"
+          ignore_errors: true
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "Success"
+          when: debian_update_result.changed and not debian_update_result.failed
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "No need to update"
+          when: not debian_update_result.changed and not debian_update_result.failed
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "Failure"
+          when: debian_update_result.failed
+
+    - name: Update some packages on Debian based OS, excluding specific packages
+      when: exclude == 1
+      block:
+        - name: Get a list of the packages that need update
+          ansible.builtin.command: apt list --upgradable
+          register: list_upgradable
+          throttle: "{{ throttling }}"
+          changed_when: list_upgradable.rc != 0
+
+        - name: Setting facts
+          ansible.builtin.set_fact:
+            upgradable_packages: "{{ list_upgradable.stdout | regex_findall('(^.+)\\/', multiline=True) }}"
+
+        - name: Updating packages
+          ansible.builtin.apt:
+            name: "{{ item }}"
+            state: latest
+            install_recommends: true
+          loop: "{{ upgradable_packages }}"
+          register: debian_update_result
+          throttle: "{{ throttling }}"
+          retries: "{{ to_retry }}"
+          until: debian_update_result is success
+          failed_when: "debian_update_result is failed and 'Failed to lock apt for exclusive operation' not in debian_update_result.msg and '/var/lib/dpkg/lock' not in debian_update_result.msg"
+          ignore_errors: true
+          when: item not in {{ debian_exclude_packages }}
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "Success"
+          when:
+            - debian_update_result.changed
+            - debian_update_result.msg is defined
+            - debian_update_result.msg == "All items completed"
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "No need to update"
+          when:
+            - not debian_update_result.changed
+            - debian_update_result.skipped_reason is defined
+            - debian_update_result.skipped_reason == "No items in the list"
+
+        - name: Set update results facts based on package updates
+          ansible.builtin.set_fact:
+            update_result: "Failure"
+          when: debian_update_result.failed is defined
+
+- name: Set facts if cache update is not performed
+  when:
+    - cache_update is defined
+    - cache_update == "Failure"
+  ansible.builtin.set_fact:
+    update_result: "No Change - Cache Update not performed"

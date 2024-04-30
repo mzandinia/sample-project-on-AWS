@@ -1,0 +1,69 @@
+---
+- name: Update OS (ALL) and notify if reboot is needed
+  hosts:
+    - debian12
+    - almalinux9
+    - amazon_linux
+    - host_not_exists
+  become: true
+  gather_facts: false
+  vars_files: vars/vars.yml
+  vars:
+    exclude: 0
+    reboot: 0
+  tasks:
+    - name: Executing main playbook
+      ansible.builtin.include_tasks: tasks/main.yml
+
+- name: Update OS (ALL) and reboot server if necessary
+  hosts:
+    - ubuntu22
+  become: true
+  gather_facts: false
+  vars_files: vars/vars.yml
+  vars:
+    exclude: 0
+    reboot: 1
+  tasks:
+    - name: Executing main playbook
+      ansible.builtin.include_tasks: tasks/main.yml
+
+- name: Update OS (SOME) and notify if reboot is needed
+  hosts:
+    - nexus
+    - splunk
+  become: true
+  gather_facts: false
+  vars_files: vars/vars.yml
+  vars:
+    exclude: 1
+    reboot: 0
+  tasks:
+    - name: Executing main playbook
+      ansible.builtin.include_tasks: tasks/main.yml
+
+- name: Update OS (SOME) and reboot server if necessary
+  hosts:
+    - rockylinux9
+  become: true
+  gather_facts: false
+  vars_files: vars/vars.yml
+  vars:
+    exclude: 1
+    reboot: 1
+    reboot_timeout_seconds: 5
+  tasks:
+    - name: Executing main playbook
+      ansible.builtin.include_tasks: tasks/main.yml
+
+- name: Copy final results to Splunk server
+  hosts:
+    - splunk
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Copy final log file
+      ansible.builtin.copy:
+        src: "/tmp/update_result.log"
+        dest: /opt/linux_update_result.log
+        mode: "0644"

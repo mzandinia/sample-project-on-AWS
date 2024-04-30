@@ -1,0 +1,35 @@
+---
+- name: Set default reboot result based on conditions
+  ansible.builtin.set_fact:
+    reboot_result: "No need to reboot"
+    elapsed_reboot_time: "-"
+  when: not reboot_required
+
+- name: Set default reboot result based on conditions
+  ansible.builtin.set_fact:
+    reboot_result: "Admin must reboot the server manually"
+    elapsed_reboot_time: "-"
+  when:
+    - reboot == 0
+    - reboot_required
+
+- name: Reboot machine if necessary
+  when: reboot == 1 and reboot_required
+  block:
+    - name: Perform the reboot
+      ansible.builtin.reboot:
+        reboot_timeout: "{{ reboot_timeout_seconds }}"
+      register: reboot_task_result
+      throttle: 1
+
+    - name: Set reboot result to success
+      ansible.builtin.set_fact:
+        reboot_result: "Success"
+        elapsed_reboot_time: "{{ reboot_task_result['elapsed'] }}"
+      when: not reboot_task_result.failed
+
+  rescue:
+    - name: Set reboot result to failure
+      ansible.builtin.set_fact:
+        reboot_result: "Failure"
+        elapsed_reboot_time: "-"

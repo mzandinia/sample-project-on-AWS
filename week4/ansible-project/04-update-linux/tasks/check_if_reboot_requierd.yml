@@ -1,0 +1,38 @@
+---
+- name: Checking if reboot is requiersd on RehHat based OS
+  when: facts['ansible_facts']['ansible_os_family'] == "RedHat"
+  block:
+    - name: Executing command to check if reboot is requiersd on
+      ansible.builtin.shell: needs-restarting -r ; echo $?
+      register: redhat_reboot_required
+      ignore_errors: true
+      changed_when: redhat_reboot_required.rc != 0
+
+    - name: Setting fact based on reboot requirement
+      ansible.builtin.set_fact:
+        reboot_required: "True"
+      when: redhat_reboot_required['stdout_lines'][-1] == '1'
+
+    - name: Setting fact based on reboot requirement
+      ansible.builtin.set_fact:
+        reboot_required: "False"
+      when: redhat_reboot_required['stdout_lines'][-1] != '1'
+
+- name: Checking if reboot is requiersd on Debian based OS
+  when: facts['ansible_facts']['ansible_os_family'] == "Debian"
+  block:
+    - name: Checking stats if reboot is requiersd
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: debian_reboot_requierd
+      ignore_errors: true
+
+    - name: Setting fact based on reboot requirement
+      ansible.builtin.set_fact:
+        reboot_required: "True"
+      when: debian_reboot_requierd['stat']['exists']
+
+    - name: Setting fact based on reboot requirement
+      ansible.builtin.set_fact:
+        reboot_required: "False"
+      when: not debian_reboot_requierd['stat']['exists']
